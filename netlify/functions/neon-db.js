@@ -1,24 +1,37 @@
-async function salvarNoBanco() {
-    let urlOriginal = document.getElementById('url-tarefa').value;
-    
-    // CONVERSÃO CRÍTICA: Transforma o link comum em link de jogo (Embed)
-    // Isso evita o erro de "Conexão Recusada"
-    let urlConvertida = urlOriginal.replace("wordwall.net/resource/", "wordwall.net/embed/resource/");
+const { neon } = require('@neondatabase/serverless');
 
-    const dados = {
-        turma: document.getElementById('sel-turma').value,
-        titulo: document.getElementById('tit-tarefa').value,
-        url: urlConvertida // Enviamos o link já pronto para o iframe
-    };
+// O segredo está nesta linha: exports.handler
+exports.handler = async (event) => {
+    // Puxa a conexão automática do seu painel
+    const sql = neon(process.env.NETLIFY_DATABASE_URL);
 
-    const resp = await fetch('/.netlify/functions/neon-db', { 
-        method: 'POST', 
-        body: JSON.stringify(dados) 
-    });
+    try {
+        // Lógica para SALVAR (POST)
+        if (event.httpMethod === 'POST') {
+            const { turma, titulo, url } = JSON.parse(event.body);
+            // Salva na sua tabela 'tarefas'
+            await sql`INSERT INTO tarefas (turma, titulo, url) VALUES (${turma}, ${titulo}, ${url})`;
+            return { 
+                statusCode: 200, 
+                body: JSON.stringify({ message: "Salvo no Neon!" }) 
+            };
+        }
 
-    if(resp.ok) {
-        alert("Tarefa salva com sucesso na tabela!");
-        document.getElementById('modal-adm').classList.add('hidden');
-        location.reload(); // Recarrega para exibir a nova atividade
+        // Lógica para BUSCAR (GET)
+        if (event.httpMethod === 'GET') {
+            const turma = event.queryStringParameters.turma;
+            // Busca os dados reais da tabela
+            const dados = await sql`SELECT * FROM tarefas WHERE turma = ${turma} ORDER BY id DESC`;
+            return { 
+                statusCode: 200, 
+                body: JSON.stringify(dados) 
+            };
+        }
+    } catch (error) {
+        // Se der erro, ele avisa nos logs
+        return { 
+            statusCode: 500, 
+            body: JSON.stringify({ error: error.message }) 
+        };
     }
-}
+};
