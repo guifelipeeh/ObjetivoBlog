@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escola Objetivo | Portal de Jogos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
+        body { font-family: 'Fredoka', sans-serif; background-color: #f8fafc; }
+        
+        .btn-objetivo {
+            transition: all 0.2s;
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            box-shadow: 0 4px 0 #e2e8f0;
+        }
+
+        .btn-objetivo:hover {
+            transform: translateY(-2px);
+            border-color: #1e3a8a;
+            color: #1e40af;
+            box-shadow: 0 6px 0 #1e3a8a;
+        }
+
+        .btn-objetivo.active {
+            background: #1e40af;
+            color: white !important;
+            border-color: #172554;
+            box-shadow: 0 4px 0 #172554;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-20">
+
+    <header class="bg-[#1e3a8a] border-b-8 border-yellow-400 shadow-2xl mb-10">
+        <div class="container mx-auto px-6 py-12 text-center relative">
+            <h1 class="text-6xl font-black text-white uppercase tracking-tighter">
+                Escola <span class="text-yellow-400">Objetivo</span>
+            </h1>
+            <p class="text-yellow-100 font-bold italic mt-2 opacity-80">Educação que Transforma</p>
+            
+            <button onclick="document.getElementById('modal-adm').classList.remove('hidden')" 
+                    class="absolute top-4 right-4 bg-yellow-400 text-blue-900 px-5 py-2 rounded-full font-black text-xs hover:bg-white transition shadow-lg">
+                <i class="fa-solid fa-plus-circle mr-2"></i> ADICIONAR TAREFA
+            </button>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 max-w-6xl">
+        
+        <div class="bg-white p-8 rounded-[3rem] shadow-xl border-2 border-slate-100 mb-12">
+            <div class="grid grid-cols-4 md:grid-cols-8 gap-3 mb-8" id="grid-anos"></div>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 border-t pt-8" id="grid-disciplinas"></div>
+        </div>
+
+        <section id="area-conteudo">
+            <div class="text-center py-24 bg-white/50 rounded-[3rem] border-4 border-dashed border-slate-200">
+                <i class="fa-solid fa-gamepad text-7xl text-slate-300 mb-6"></i>
+                <h3 class="text-2xl font-bold text-slate-400">Selecione uma turma para ver as tarefas</h3>
+            </div>
+        </section>
+    </main>
+
+    <div id="modal-adm" class="hidden fixed inset-0 bg-blue-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-[2.5rem] p-8 shadow-2xl border-t-8 border-yellow-400">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-black text-blue-900">NOVA TAREFA WORDWALL</h3>
+                <button onclick="document.getElementById('modal-adm').classList.add('hidden')" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+
+            <div class="space-y-4">
+                <select id="select-turma" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-bold text-blue-900 outline-none"></select>
+                <input type="text" id="titulo-tarefa" placeholder="Nome da Atividade" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none font-bold">
+                <textarea id="url-tarefa" placeholder="Cole o link do Wordwall aqui..." class="w-full h-24 p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none resize-none"></textarea>
+                
+                <button onclick="salvarTarefa()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-lg hover:bg-blue-700 transition shadow-xl shadow-blue-200">
+                    PUBLICAR AGORA
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const turmas = ['1ºA', '1ºB', '1ºC', '1ºD', '2ºA', '2ºB', '2ºC', '2ºD', '3ºA', '3ºB', '3ºC', '3ºD', '4ºA', '4ºB', '4ºC', '4ºD', '5ºA', '5ºB', '5ºC', '5ºD', 'A.E.E'];
+        const extras = ['Alfabetização', 'Matemática M.', 'Matemática T.', 'Produção de Texto', 'Sala de Leitura', 'Avisos'];
+
+        // Banco de dados local (salvo no seu navegador)
+        let db = JSON.parse(localStorage.getItem('objetivo_tasks')) || {};
+
+        function carregarInterface() {
+            const anos = document.getElementById('grid-anos');
+            const disciplinas = document.getElementById('grid-disciplinas');
+            const select = document.getElementById('select-turma');
+
+            [...turmas, ...extras].forEach(t => {
+                const btn = document.createElement('button');
+                btn.innerText = t;
+                btn.className = "btn-objetivo py-3 rounded-xl font-bold text-sm text-slate-500";
+                btn.onclick = () => verTurma(t, btn);
+                
+                if(turmas.includes(t)) anos.appendChild(btn);
+                else disciplinas.appendChild(btn);
+
+                const opt = document.createElement('option');
+                opt.value = t; opt.innerText = t;
+                select.appendChild(opt);
+            });
+        }
+
+        function salvarTarefa() {
+            const turma = document.getElementById('select-turma').value;
+            const titulo = document.getElementById('titulo-tarefa').value;
+            let url = document.getElementById('url-tarefa').value;
+
+            if(!titulo || !url) return alert("Por favor, preencha tudo!");
+
+            // Converte link comum para link de jogo (Embed) automaticamente
+            if(url.includes('wordwall.net/resource')) {
+                url = url.replace('wordwall.net/resource', 'wordwall.net/embed/resource');
+            }
+
+            if(!db[turma]) db[turma] = [];
+            db[turma].unshift({ titulo, url, data: new Date().toLocaleDateString() });
+
+            localStorage.setItem('objetivo_tasks', JSON.stringify(db));
+            alert("Atividade salva!");
+            
+            document.getElementById('modal-adm').classList.add('hidden');
+            document.getElementById('titulo-tarefa').value = '';
+            document.getElementById('url-tarefa').value = '';
+        }
+
+        function verTurma(nome, btn) {
+            document.querySelectorAll('.btn-objetivo').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const area = document.getElementById('area-conteudo');
+            let html = `<h2 class="text-3xl font-black text-blue-900 mb-8 border-l-8 border-yellow-400 pl-4 uppercase">${nome}</h2>`;
+
+            const tarefas = db[nome];
+
+            if(tarefas && tarefas.length > 0) {
+                html += `<div class="grid grid-cols-1 gap-10">`;
+                tarefas.forEach((item, index) => {
+                    html += `
+                        <div class="bg-white p-6 rounded-[2.5rem] shadow-xl border border-slate-100 relative group">
+                            <button onclick="excluirTarefa('${nome}', ${index})" class="absolute top-6 right-6 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition"><i class="fa-solid fa-trash"></i></button>
+                            <h4 class="text-xl font-bold text-slate-700 mb-4">${item.titulo} <span class="text-xs text-slate-300 ml-2">${item.data}</span></h4>
+                            <div class="aspect-video rounded-3xl overflow-hidden bg-slate-100 border-2 border-slate-50">
+                                <iframe src="${item.url}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+                            </div>
+                        </div>`;
+                });
+                html += `</div>`;
+            } else {
+                html += `<div class="bg-white p-20 rounded-[3rem] text-center border-2 border-slate-100"><p class="text-slate-400 font-bold italic">Nenhuma atividade postada ainda.</p></div>`;
+            }
+
+            area.innerHTML = html;
+        }
+
+        function excluirTarefa(turma, index) {
+            if(confirm("Deseja apagar esta tarefa?")) {
+                db[turma].splice(index, 1);
+                localStorage.setItem('objetivo_tasks', JSON.stringify(db));
+                location.reload();
+            }
+        }
+
+        window.onload = carregarInterface;
+    </script>
+</body>
+</html>
