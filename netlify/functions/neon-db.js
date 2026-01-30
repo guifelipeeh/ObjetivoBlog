@@ -1,27 +1,24 @@
-const { neon } = require('@neondatabase/serverless'); // Mude para esta linha
-
-exports.handler = async (event) => {
-    // A variável abaixo já está configurada no seu painel Netlify
-    const sql = neon(process.env.NETLIFY_DATABASE_URL);
+async function salvarNoBanco() {
+    let urlOriginal = document.getElementById('url-tarefa').value;
     
-    if (event.httpMethod === 'POST') {
-        try {
-            const { turma, titulo, url } = JSON.parse(event.body);
-            // Salva na tabela 'tarefas' que você criou
-            await sql`INSERT INTO tarefas (turma, titulo, url) VALUES (${turma}, ${titulo}, ${url})`;
-            return { statusCode: 200, body: JSON.stringify({ message: "Sucesso!" }) };
-        } catch (err) {
-            return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
-        }
-    }
+    // CONVERSÃO CRÍTICA: Transforma o link comum em link de jogo (Embed)
+    // Isso evita o erro de "Conexão Recusada"
+    let urlConvertida = urlOriginal.replace("wordwall.net/resource/", "wordwall.net/embed/resource/");
 
-    if (event.httpMethod === 'GET') {
-        try {
-            const turma = event.queryStringParameters.turma;
-            const dados = await sql`SELECT * FROM tarefas WHERE turma = ${turma} ORDER BY id DESC`;
-            return { statusCode: 200, body: JSON.stringify(dados) };
-        } catch (err) {
-            return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
-        }
+    const dados = {
+        turma: document.getElementById('sel-turma').value,
+        titulo: document.getElementById('tit-tarefa').value,
+        url: urlConvertida // Enviamos o link já pronto para o iframe
+    };
+
+    const resp = await fetch('/.netlify/functions/neon-db', { 
+        method: 'POST', 
+        body: JSON.stringify(dados) 
+    });
+
+    if(resp.ok) {
+        alert("Tarefa salva com sucesso na tabela!");
+        document.getElementById('modal-adm').classList.add('hidden');
+        location.reload(); // Recarrega para exibir a nova atividade
     }
-};
+}
