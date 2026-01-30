@@ -84,71 +84,84 @@
     </div>
 
     <script>
-        const turmas = ['1ºA', '1ºB', '1ºC', '1ºD', '2ºA', '2ºB', '2ºC', '2ºD', '3ºA', '3ºB', '3ºC', '3ºD', '4ºA', '4ºB', '4ºC', '4ºD', '5ºA', '5ºB', '5ºC', '5ºD', 'A.E.E'];
-        const extras = ['Alfabetização', 'Matemática M.', 'Matemática T.', 'Produção de Texto', 'Sala de Leitura', 'Avisos'];
+    const turmas = ['1ºA', '1ºB', '1ºC', '1ºD', '2ºA', '2ºB', '2ºC', '2ºD', '3ºA', '3ºB', '3ºC', '3ºD', '4ºA', '4ºB', '4ºC', '4ºD', '5ºA', '5ºB', '5ºC', '5ºD', 'A.E.E'];
+    const extras = ['Alfabetização', 'Matemática M.', 'Matemática T.', 'Produção de Texto', 'Sala de Leitura', 'Avisos'];
 
-        // Banco de dados local (salvo no seu navegador)
-        let db = JSON.parse(localStorage.getItem('objetivo_tasks')) || {};
+    function carregarInterface() {
+        const anos = document.getElementById('grid-anos');
+        const disciplinas = document.getElementById('grid-disciplinas');
+        const select = document.getElementById('select-turma');
 
-        function carregarInterface() {
-            const anos = document.getElementById('grid-anos');
-            const disciplinas = document.getElementById('grid-disciplinas');
-            const select = document.getElementById('select-turma');
-
-            [...turmas, ...extras].forEach(t => {
-                const btn = document.createElement('button');
-                btn.innerText = t;
-                btn.className = "btn-objetivo py-3 rounded-xl font-bold text-sm text-slate-500";
-                btn.onclick = () => verTurma(t, btn);
-                
-                if(turmas.includes(t)) anos.appendChild(btn);
-                else disciplinas.appendChild(btn);
-
-                const opt = document.createElement('option');
-                opt.value = t; opt.innerText = t;
-                select.appendChild(opt);
-            });
-        }
-
-        function salvarTarefa() {
-            const turma = document.getElementById('select-turma').value;
-            const titulo = document.getElementById('titulo-tarefa').value;
-            let url = document.getElementById('url-tarefa').value;
-
-            if(!titulo || !url) return alert("Por favor, preencha tudo!");
-
-            // Converte link comum para link de jogo (Embed) automaticamente
-            if(url.includes('wordwall.net/resource')) {
-                url = url.replace('wordwall.net/resource', 'wordwall.net/embed/resource');
-            }
-
-            if(!db[turma]) db[turma] = [];
-            db[turma].unshift({ titulo, url, data: new Date().toLocaleDateString() });
-
-            localStorage.setItem('objetivo_tasks', JSON.stringify(db));
-            alert("Atividade salva!");
+        [...turmas, ...extras].forEach(t => {
+            const btn = document.createElement('button');
+            btn.innerText = t;
+            btn.className = "btn-objetivo py-3 rounded-xl font-bold text-sm text-slate-500";
+            btn.onclick = () => verTurma(t, btn);
             
-            document.getElementById('modal-adm').classList.add('hidden');
-            document.getElementById('titulo-tarefa').value = '';
-            document.getElementById('url-tarefa').value = '';
+            if(turmas.includes(t)) anos.appendChild(btn);
+            else disciplinas.appendChild(btn);
+
+            const opt = document.createElement('option');
+            opt.value = t; opt.innerText = t;
+            select.appendChild(opt);
+        });
+    }
+
+    // NOVA FUNÇÃO: SALVA NO BANCO NEON
+    async function salvarTarefa() {
+        const turma = document.getElementById('select-turma').value;
+        const titulo = document.getElementById('titulo-tarefa').value;
+        let url = document.getElementById('url-tarefa').value;
+
+        if(!titulo || !url) return alert("Por favor, preencha tudo!");
+
+        // Ajuste automático para o Wordwall não recusar a conexão
+        url = url.replace('wordwall.net/resource', 'wordwall.net/embed/resource');
+
+        const dados = { turma, titulo, url };
+
+        try {
+            // Chama a função do Netlify que você criou
+            const resp = await fetch('/.netlify/functions/neon-db', {
+                method: 'POST',
+                body: JSON.stringify(dados)
+            });
+
+            if(resp.ok) {
+                alert("Atividade salva permanentemente no banco Neon!");
+                document.getElementById('modal-adm').classList.add('hidden');
+                document.getElementById('titulo-tarefa').value = '';
+                document.getElementById('url-tarefa').value = '';
+                location.reload(); 
+            } else {
+                alert("Erro ao salvar. Verifique se o banco Neon está conectado no Netlify.");
+            }
+        } catch (error) {
+            alert("Erro de conexão com o servidor.");
         }
+    }
 
-        function verTurma(nome, btn) {
-            document.querySelectorAll('.btn-objetivo').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+    // NOVA FUNÇÃO: BUSCA DADOS REAIS DO NEON
+    async function verTurma(nome, btn) {
+        document.querySelectorAll('.btn-objetivo').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
 
-            const area = document.getElementById('area-conteudo');
+        const area = document.getElementById('area-conteudo');
+        area.innerHTML = "<p class='text-center py-10 animate-pulse text-blue-500 font-bold'>Carregando do banco Neon...</p>";
+
+        try {
+            // Busca as tarefas da turma específica na sua tabela
+            const resp = await fetch(`/.netlify/functions/neon-db?turma=${encodeURIComponent(nome)}`);
+            const tarefas = await resp.json();
+
             let html = `<h2 class="text-3xl font-black text-blue-900 mb-8 border-l-8 border-yellow-400 pl-4 uppercase">${nome}</h2>`;
-
-            const tarefas = db[nome];
 
             if(tarefas && tarefas.length > 0) {
                 html += `<div class="grid grid-cols-1 gap-10">`;
-                tarefas.forEach((item, index) => {
+                tarefas.forEach((item) => {
                     html += `
                         <div class="bg-white p-6 rounded-[2.5rem] shadow-xl border border-slate-100 relative group">
-                            <button onclick="excluirTarefa('${nome}', ${index})" class="absolute top-6 right-6 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition"><i class="fa-solid fa-trash"></i></button>
-                            <h4 class="text-xl font-bold text-slate-700 mb-4">${item.titulo} <span class="text-xs text-slate-300 ml-2">${item.data}</span></h4>
+                            <h4 class="text-xl font-bold text-slate-700 mb-4">${item.titulo}</h4>
                             <div class="aspect-video rounded-3xl overflow-hidden bg-slate-100 border-2 border-slate-50">
                                 <iframe src="${item.url}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
                             </div>
@@ -156,21 +169,16 @@
                 });
                 html += `</div>`;
             } else {
-                html += `<div class="bg-white p-20 rounded-[3rem] text-center border-2 border-slate-100"><p class="text-slate-400 font-bold italic">Nenhuma atividade postada ainda.</p></div>`;
+                html += `<div class="bg-white p-20 rounded-[3rem] text-center border-2 border-slate-100"><p class="text-slate-400 font-bold italic">Nenhuma atividade postada ainda nesta turma.</p></div>`;
             }
 
             area.innerHTML = html;
+        } catch (error) {
+            area.innerHTML = "<p class='text-center text-red-500 font-bold'>Erro ao carregar dados do banco.</p>";
         }
+    }
 
-        function excluirTarefa(turma, index) {
-            if(confirm("Deseja apagar esta tarefa?")) {
-                db[turma].splice(index, 1);
-                localStorage.setItem('objetivo_tasks', JSON.stringify(db));
-                location.reload();
-            }
-        }
-
-        window.onload = carregarInterface;
-    </script>
+    window.onload = carregarInterface;
+</script>
 </body>
 </html>
