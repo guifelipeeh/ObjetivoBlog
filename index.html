@@ -5,62 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Escola Objetivo | Portal de Jogos</title>
     <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
         body { font-family: 'Fredoka', sans-serif; background-color: #f8fafc; }
-        
-        .btn-objetivo {
-            transition: all 0.2s;
-            background: #ffffff;
-            border: 2px solid #e2e8f0;
-            box-shadow: 0 4px 0 #e2e8f0;
-        }
-
-        .btn-objetivo:hover {
-            transform: translateY(-2px);
-            border-color: #1e3a8a;
-            color: #1e40af;
-            box-shadow: 0 6px 0 #1e3a8a;
-        }
-
-        .btn-objetivo.active {
-            background: #1e40af;
-            color: white !important;
-            border-color: #172554;
-            box-shadow: 0 4px 0 #172554;
-        }
-
-        .card-jogo {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .card-jogo:hover {
-            transform: scale(1.03) translateY(-10px);
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-        }
+        .btn-objetivo { transition: all 0.2s; background: #ffffff; border: 2px solid #e2e8f0; box-shadow: 0 4px 0 #e2e8f0; }
+        .btn-objetivo:hover { transform: translateY(-2px); border-color: #1e3a8a; color: #1e40af; box-shadow: 0 6px 0 #1e3a8a; }
+        .btn-objetivo.active { background: #1e40af; color: white !important; border-color: #172554; box-shadow: 0 4px 0 #172554; }
+        .card-jogo { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
+        .card-jogo:hover { transform: scale(1.02) translateY(-5px); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col"> 
     <header class="bg-[#1e3a8a] border-b-8 border-yellow-400 shadow-2xl mb-10">
         <div class="container mx-auto px-6 py-12 text-center relative flex flex-col items-center">
-            
             <div id="user-area" class="absolute top-4 right-4 flex items-center gap-3">
-                <button id="btn-login-modal" onclick="abrirModal('modal-login')" class="hidden bg-white text-blue-900 px-4 py-2 rounded-full font-bold text-xs shadow-md hover:bg-yellow-400 transition">LOGIN ADM</button>
-                <button id="btn-add-tarefa" class="hidden bg-yellow-400 text-blue-900 px-5 py-2 rounded-full font-black text-xs hover:bg-white transition shadow-lg" onclick="abrirModal('modal-adm')">
-                    <i class="fa-solid fa-plus-circle mr-2"></i> ADICIONAR TAREFA
-                </button>
-                <button id="btn-logout" onclick="logout()" class="hidden text-white opacity-50 hover:opacity-100">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                </button>
+                <button id="btn-login-modal" onclick="abrirModal('modal-login')" class="hidden bg-white text-blue-900 px-4 py-2 rounded-full font-bold text-xs shadow-md">LOGIN ADM</button>
+                <button id="btn-add-tarefa" class="hidden bg-yellow-400 text-blue-900 px-5 py-2 rounded-full font-black text-xs shadow-lg" onclick="abrirModal('modal-adm')">ADICIONAR TAREFA</button>
+                <button id="btn-logout" onclick="logout()" class="hidden text-white opacity-50 hover:opacity-100"><i class="fa-solid fa-right-from-bracket"></i></button>
             </div>
-
-            <h1 class="text-6xl font-black text-white uppercase tracking-tighter">
-                Escola <span class="text-yellow-400">Objetivo</span>
-            </h1>
-            <p class="text-yellow-100 font-bold italic mt-2 opacity-80">Educação que Transforma</p>
+            <h1 class="text-6xl font-black text-white uppercase tracking-tighter">Escola <span class="text-yellow-400">Objetivo</span></h1>
         </div>
     </header>
 
@@ -69,13 +34,7 @@
             <div class="grid grid-cols-4 md:grid-cols-8 gap-3 mb-8" id="grid-anos"></div>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 border-t pt-8" id="grid-disciplinas"></div>
         </div>
-
-        <section id="area-conteudo">
-            <div class="text-center py-24 bg-white/50 rounded-[3rem] border-4 border-dashed border-slate-200">
-                <i class="fa-solid fa-gamepad text-7xl text-slate-300 mb-6"></i>
-                <h3 class="text-2xl font-bold text-slate-400">Selecione uma turma para ver as tarefas</h3>
-            </div>
-        </section>
+        <section id="area-conteudo"></section>
     </main>
 
     <div id="modal-login" class="hidden fixed inset-0 bg-blue-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -84,43 +43,33 @@
                 <h3 class="text-2xl font-black text-blue-900">ACESSO RESTRITO</h3>
                 <button onclick="abrirModal('null')" class="text-slate-400"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <input type="email" id="login-email" placeholder="Email" class="w-full p-4 mb-3 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none font-bold">
-            <input type="password" id="login-senha" placeholder="Senha" class="w-full p-4 mb-6 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none font-bold">
+            <input type="email" id="login-email" placeholder="Email" class="w-full p-4 mb-3 bg-slate-50 border-2 rounded-2xl outline-none font-bold">
+            <input type="password" id="login-senha" placeholder="Senha" class="w-full p-4 mb-6 bg-slate-50 border-2 rounded-2xl outline-none font-bold">
             <button onclick="fazerAuth('login')" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">ENTRAR</button>
         </div>
     </div>
 
     <div id="modal-adm" class="hidden fixed inset-0 bg-blue-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-[2.5rem] p-8 shadow-2xl border-t-8 border-yellow-400">
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex justify-between mb-6">
                 <h3 class="text-2xl font-black text-blue-900">NOVA TAREFA</h3>
-                <button onclick="abrirModal('null')" class="text-slate-400"><i class="fa-solid fa-xmark text-2xl"></i></button>
+                <button onclick="abrirModal('null')" class="text-slate-400"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="space-y-4">
-                <select id="select-turma" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-bold text-blue-900 outline-none"></select>
-                <input type="text" id="titulo-tarefa" placeholder="Nome da Atividade" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none font-bold">
-                <input type="text" id="url-imagem" placeholder="URL da Imagem de Capa" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none font-bold">
-                <input type="text" id="url-tarefa" placeholder="Link do Jogo Wordwall" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none font-bold">
-                <button onclick="salvarTarefa()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-lg shadow-xl">PUBLICAR NO NEON</button>
+                <select id="select-turma" class="w-full p-4 bg-slate-50 border-2 rounded-2xl font-bold outline-none"></select>
+                <input type="text" id="titulo-tarefa" placeholder="Nome da Atividade" class="w-full p-4 bg-slate-50 border-2 rounded-2xl outline-none">
+                <input type="text" id="url-imagem" placeholder="URL da Imagem de Capa" class="w-full p-4 bg-slate-50 border-2 rounded-2xl outline-none">
+                <input type="text" id="url-tarefa" placeholder="Link do Wordwall" class="w-full p-4 bg-slate-50 border-2 rounded-2xl outline-none">
+                <button onclick="salvarTarefa()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black shadow-xl">PUBLICAR NO NEON</button>
             </div>
         </div>
     </div>
 
     <footer class="bg-white border-t-8 border-yellow-400 mt-20 pt-16 pb-8">
-        <div class="container mx-auto px-4 max-w-6xl text-center md:text-left">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-12">
-                <div class="flex-1">
-                    <p class="text-blue-900 font-black text-xs uppercase tracking-widest mb-4">Developed with</p>
-                    <img src="assets/sollos.png" alt="Sollos Tech" class="h-12 mx-auto md:mx-0">
-                </div>
-                <div class="flex-1 text-center">
-                    <p class="text-blue-900 font-black text-xs uppercase tracking-widest mb-4">Powered by</p>
-                    <img src="assets/robotech.png" alt="Robotech" class="h-16 mx-auto">
-                </div>
-                <div class="flex-1 md:text-right">
-                    <p class="text-slate-400 text-[10px] font-bold uppercase">© 2026 Escola Objetivo Martinópolis</p>
-                </div>
-            </div>
+        <div class="container mx-auto px-4 max-w-6xl text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-12">
+            <div><img src="assets/sollos.png" class="h-12"></div>
+            <div><img src="assets/robotech.png" class="h-16"></div>
+            <p class="text-slate-400 text-[10px] font-bold uppercase">© 2026 Escola Objetivo Martinópolis</p>
         </div>
     </footer>
 
@@ -137,48 +86,65 @@
         const anos = document.getElementById('grid-anos');
         const disciplinas = document.getElementById('grid-disciplinas');
         const select = document.getElementById('select-turma');
-
         [...turmas, ...extras].forEach(t => {
             const btn = document.createElement('button');
             btn.innerText = t;
             btn.className = "btn-objetivo py-3 rounded-xl font-bold text-sm text-slate-500";
             btn.onclick = () => verTurma(t, btn);
             if(turmas.includes(t)) anos.appendChild(btn); else disciplinas.appendChild(btn);
-            const opt = document.createElement('option');
-            opt.value = t; opt.innerText = t;
-            select.appendChild(opt);
+            const opt = document.createElement('option'); opt.value = t; opt.innerText = t; select.appendChild(opt);
         });
     }
 
-    function verificarAcessoAdm() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const temChave = urlParams.get('admin') === 'true';
-        const estaLogado = localStorage.getItem('user_logado');
-        if (temChave || estaLogado) {
-            if (!estaLogado) document.getElementById('btn-login-modal').classList.remove('hidden');
-            else {
-                document.getElementById('btn-add-tarefa').classList.remove('hidden');
-                document.getElementById('btn-logout').classList.remove('hidden');
-            }
+    // ELIMINAR TAREFA
+    async function deletarTarefa(id) {
+        if(!confirm("Tem certeza que deseja apagar esta atividade?")) return;
+        
+        const resp = await fetch('/.netlify/functions/neon-db', {
+            method: 'DELETE',
+            body: JSON.stringify({ id })
+        });
+
+        if(resp.ok) {
+            alert("Atividade removida!");
+            location.reload();
+        } else {
+            alert("Erro ao apagar.");
         }
     }
 
-    async function fazerAuth(action) {
-        const email = document.getElementById('login-email').value;
-        const senha = document.getElementById('login-senha').value;
-        try {
-            const resp = await fetch('/.netlify/functions/auth', { method: 'POST', body: JSON.stringify({ action, email, senha }) });
-            const res = await resp.json();
-            if (resp.ok) {
-                localStorage.setItem('user_logado', res.nome);
-                location.reload(); 
-            } else alert("Erro no login");
-        } catch (e) { alert("Erro de conexão"); }
-    }
+    async function verTurma(nome, btn) {
+        document.querySelectorAll('.btn-objetivo').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const estaLogado = localStorage.getItem('user_logado');
+        const area = document.getElementById('area-conteudo');
+        area.innerHTML = "<p class='text-center py-10 animate-pulse text-blue-500'>Carregando...</p>";
 
-    function logout() {
-        localStorage.removeItem('user_logado');
-        location.href = window.location.pathname;
+        const resp = await fetch(`/.netlify/functions/neon-db?turma=${encodeURIComponent(nome)}`);
+        const tarefas = await resp.json();
+
+        let html = `<h2 class="text-3xl font-black text-blue-900 mb-8 border-l-8 border-yellow-400 pl-4 uppercase">${nome}</h2>`;
+        if(tarefas.length > 0) {
+            html += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">`;
+            tarefas.forEach(t => {
+                const img = t.imagem_url || 'https://placehold.co/600x400?text=Atividade';
+                html += `
+                    <div class="card-jogo">
+                        ${estaLogado ? `<button onclick="deletarTarefa(${t.id})" class="absolute top-4 left-4 z-10 bg-red-500 text-white w-10 h-10 rounded-full shadow-lg hover:bg-red-700 transition"><i class="fa-solid fa-trash-can"></i></button>` : ''}
+                        <a href="${t.url}" target="_blank" class="block bg-white rounded-[2.5rem] overflow-hidden shadow-lg border border-slate-100">
+                            <div class="h-48 overflow-hidden bg-slate-100">
+                                <img src="${img}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-6 flex justify-between items-center">
+                                <span class="font-bold text-blue-900 uppercase">${t.titulo}</span>
+                                <i class="fa-solid fa-circle-play text-blue-600 text-3xl"></i>
+                            </div>
+                        </a>
+                    </div>`;
+            });
+            html += `</div>`;
+        } else html += `<p class='text-center text-slate-400 italic py-20 bg-white rounded-[3rem]'>Nenhuma atividade.</p>`;
+        area.innerHTML = html;
     }
 
     async function salvarTarefa() {
@@ -189,39 +155,28 @@
             url: document.getElementById('url-tarefa').value
         };
         const resp = await fetch('/.netlify/functions/neon-db', { method: 'POST', body: JSON.stringify(dados) });
-        if(resp.ok) { alert("Sucesso!"); location.reload(); }
+        if(resp.ok) location.reload();
     }
 
-    async function verTurma(nome, btn) {
-        document.querySelectorAll('.btn-objetivo').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const area = document.getElementById('area-conteudo');
-        area.innerHTML = "<p class='text-center py-10 animate-pulse text-blue-500'>Buscando atividades...</p>";
-
-        const resp = await fetch(`/.netlify/functions/neon-db?turma=${encodeURIComponent(nome)}`);
-        const tarefas = await resp.json();
-
-        let html = `<h2 class="text-3xl font-black text-blue-900 mb-8 border-l-8 border-yellow-400 pl-4 uppercase">${nome}</h2>`;
-        if(tarefas.length > 0) {
-            html += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">`;
-            tarefas.forEach(t => {
-                const img = t.imagem_url || 'https://placehold.co/600x400?text=Escola+Objetivo';
-                html += `
-                    <a href="${t.url}" target="_blank" class="card-jogo block bg-white rounded-[2.5rem] overflow-hidden shadow-lg border border-slate-100 transition-all">
-                        <div class="h-48 overflow-hidden bg-slate-100">
-                            <img src="${img}" class="w-full h-full object-cover">
-                        </div>
-                        <div class="p-6 flex justify-between items-center">
-                            <span class="font-bold text-blue-900 uppercase">${t.titulo}</span>
-                            <i class="fa-solid fa-circle-play text-blue-600 text-3xl"></i>
-                        </div>
-                    </a>`;
-            });
-            html += `</div>`;
-        } else html += `<p class='text-center text-slate-400 italic py-20 bg-white rounded-[3rem]'>Nenhuma atividade disponível.</p>`;
-        area.innerHTML = html;
+    function verificarAcessoAdm() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const temChave = urlParams.get('admin') === 'true' || localStorage.getItem('user_logado');
+        if (temChave) document.getElementById('btn-login-modal').classList.toggle('hidden', !!localStorage.getItem('user_logado'));
+        if (localStorage.getItem('user_logado')) {
+            document.getElementById('btn-add-tarefa').classList.remove('hidden');
+            document.getElementById('btn-logout').classList.remove('hidden');
+        }
     }
 
+    async function fazerAuth(action) {
+        const email = document.getElementById('login-email').value;
+        const senha = document.getElementById('login-senha').value;
+        const resp = await fetch('/.netlify/functions/auth', { method: 'POST', body: JSON.stringify({ action, email, senha }) });
+        const res = await resp.json();
+        if (resp.ok) { localStorage.setItem('user_logado', res.nome); location.reload(); }
+    }
+
+    function logout() { localStorage.removeItem('user_logado'); location.href = window.location.pathname; }
     window.onload = () => { carregarInterface(); verificarAcessoAdm(); };
     </script>
 </body>
