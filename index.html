@@ -36,24 +36,52 @@
         <section id="area-conteudo"></section>
     </main>
 
-    <div id="modal-adm" class="hidden fixed inset-0 bg-blue-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-lg rounded-[2.5rem] p-8 shadow-2xl border-t-8 border-yellow-400">
-            <div class="flex justify-between items-center mb-6">
+  <div id="modal-adm" class="hidden fixed inset-0 bg-blue-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-[2.5rem] p-8 shadow-2xl border-t-8 border-yellow-400">
+        <div class="flex justify-between items-center mb-6">
+            <div>
                 <h3 class="text-2xl font-black text-blue-900 uppercase">Publicar Atividade</h3>
-                <button onclick="abrirModal('null')" class="text-slate-400"><i class="fa-solid fa-xmark text-2xl"></i></button>
+                <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Painel Administrativo</p>
             </div>
-            <div class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <select id="select-turma" class="p-4 bg-slate-50 border-2 rounded-2xl font-bold"></select>
-                    <input type="date" id="data-tarefa" class="p-4 bg-slate-50 border-2 rounded-2xl font-bold">
+            <button onclick="abrirModal('null')" class="text-slate-300 hover:text-red-500 transition-colors">
+                <i class="fa-solid fa-circle-xmark text-3xl"></i>
+            </button>
+        </div>
+
+        <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-black text-blue-900 ml-2 uppercase">Turma/Ano</label>
+                    <select id="select-turma" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-bold text-blue-900 outline-none focus:border-blue-400 transition-all"></select>
                 </div>
-                <input type="text" id="titulo-tarefa" placeholder="Título da Atividade" class="w-full p-4 bg-slate-50 border-2 rounded-2xl outline-none">
-                <input type="text" id="url-imagem" placeholder="Link da Imagem de Capa" class="w-full p-4 bg-slate-50 border-2 rounded-2xl outline-none">
-                <input type="text" id="url-tarefa" placeholder="Link do Wordwall" class="w-full p-4 bg-slate-50 border-2 rounded-2xl outline-none">
-                <button onclick="salvarTarefa()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black shadow-xl">SALVAR NO BANCO</button>
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-black text-blue-900 ml-2 uppercase">Data da Aula</label>
+                    <input type="date" id="data-tarefa" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-bold text-blue-600 outline-none focus:border-blue-400 transition-all">
+                </div>
             </div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-black text-blue-900 ml-2 uppercase">Título</label>
+                <input type="text" id="titulo-tarefa" placeholder="Ex: Caça-Palavras das Cores" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none font-bold focus:border-blue-400 transition-all">
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-black text-blue-900 ml-2 uppercase">Imagem de Capa (URL)</label>
+                <input type="text" id="url-imagem" placeholder="Cole o link da imagem aqui..." class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none font-bold focus:border-blue-400 transition-all">
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-black text-blue-900 ml-2 uppercase">Link do Jogo (Wordwall)</label>
+                <input type="text" id="url-tarefa" placeholder="https://wordwall.net/play/..." class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none font-bold focus:border-blue-400 transition-all">
+            </div>
+
+            <button onclick="salvarTarefa()" class="w-full bg-[#1e3a8a] hover:bg-blue-800 text-white py-5 rounded-[1.5rem] font-black shadow-xl shadow-blue-200 transition-all flex items-center justify-center gap-3">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                PUBLICAR AGORA
+            </button>
         </div>
     </div>
+</div>
 
     <div id="modal-login" class="hidden fixed inset-0 bg-blue-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl border-t-8 border-yellow-400 text-center">
@@ -64,13 +92,58 @@
         </div>
     </div>
 
-    <footer class="bg-white border-t-8 border-yellow-400 mt-20 pt-16 pb-8">
-        <div class="container mx-auto px-4 max-w-6xl text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-12">
-            <div><img src="./assets/sollos.png" class="h-12"></div>
-            <div><img src="./assets/robotech.png" class="h-16"></div>
-            <p class="text-slate-400 text-[10px] font-bold uppercase">© 2026 Escola Objetivo Martinópolis</p>
+    <footer class="bg-[#1e3a8a] text-white mt-20 border-t-8 border-yellow-400">
+    <div class="container mx-auto px-6 pt-16 pb-8 max-w-6xl">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+            
+            <div class="flex flex-col items-center md:items-start">
+                <h1 class="text-2xl font-black uppercase tracking-tighter mb-4">
+                    Escola <span class="text-yellow-400">Objetivo</span>
+                </h1>
+                <p class="text-blue-100 text-sm leading-relaxed text-center md:text-left opacity-80">
+                    Proporcionando uma educação que transforma vidas através da inovação e tecnologia. Nosso Portal de Jogos é uma extensão do aprendizado em sala de aula.
+                </p>
+                <div class="flex gap-4 mt-6">
+                    <a href="#" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-400 hover:text-blue-900 transition-all"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-400 hover:text-blue-900 transition-all"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-400 hover:text-blue-900 transition-all"><i class="fa-solid fa-globe"></i></a>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-center justify-center space-y-8 border-y md:border-y-0 md:border-x border-white/10 py-8 md:py-0">
+                <div class="text-center">
+                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-yellow-400 mb-4">Desenvolvido por</p>
+                    <img src="./assets/sollos.png" alt="Sollos Tech" class="h-10 brightness-0 invert opacity-90 hover:opacity-100 transition-opacity mx-auto">
+                </div>
+                <div class="text-center">
+                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-yellow-400 mb-4">Tecnologia</p>
+                    <img src="./assets/robotech.png" alt="Robotech" class="h-12 brightness-0 invert opacity-90 hover:opacity-100 transition-opacity mx-auto">
+                </div>
+            </div>
+
+            <div class="flex flex-col items-center md:items-end justify-center">
+                <div class="text-center md:text-right">
+                    <h4 class="font-bold text-yellow-400 mb-2">Unidade Martinópolis</h4>
+                    <p class="text-blue-100 text-xs opacity-70 leading-loose">
+                       <br>
+                        <br>
+                      
+                    </p>
+                </div>
+            </div>
         </div>
-    </footer>
+
+        <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-[10px] font-medium text-blue-200/50 uppercase tracking-widest">
+                © 2026 Escola Objetivo Martinópolis | Todos os direitos reservados
+            </p>
+            <div class="flex gap-6">
+                <span class="text-[9px] font-bold text-blue-200/30 uppercase">Privacidade</span>
+                <span class="text-[9px] font-bold text-blue-200/30 uppercase">Termos de Uso</span>
+            </div>
+        </div>
+    </div>
+</footer>
 
     <script>
     const turmas = ['1ºA', '1ºB', '1ºC', '1ºD', '2ºA', '2ºB', '2ºC', '2ºD', '3ºA', '3ºB', '3ºC', '3ºD', '4ºA', '4ºB', '4ºC', '4ºD', '5ºA', '5ºB', '5ºC', '5ºD', 'A.E.E'];
@@ -116,52 +189,78 @@
     }
 
     async function verTurma(nome, btn) {
-        document.querySelectorAll('.btn-objetivo').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const estaLogado = localStorage.getItem('user_logado');
-        const area = document.getElementById('area-conteudo');
-        area.innerHTML = "<p class='text-center py-20 animate-pulse'>Buscando atividades...</p>";
+    // 1. Estética: Ativa o botão selecionado
+    document.querySelectorAll('.btn-objetivo').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    const estaLogado = localStorage.getItem('user_logado');
+    const area = document.getElementById('area-conteudo');
+    area.innerHTML = "<p class='text-center py-20 animate-pulse text-blue-500'>Organizando atividades por data...</p>";
 
-        const resp = await fetch(`/.netlify/functions/neon-db?turma=${encodeURIComponent(nome)}`);
-        const tarefas = await resp.json();
+    // 2. Busca no Neon
+    const resp = await fetch(`/.netlify/functions/neon-db?turma=${encodeURIComponent(nome)}`);
+    const tarefas = await resp.json();
 
-        let html = `<h2 class="text-3xl font-black text-blue-900 mb-8 border-l-8 border-yellow-400 pl-4 uppercase">${nome}</h2>`;
+    let html = `<h2 class="text-3xl font-black text-blue-900 mb-8 border-l-8 border-yellow-400 pl-4 uppercase">${nome}</h2>`;
+    
+    if(tarefas.length > 0) {
+        // --- LOGICA DE AGRUPAMENTO ---
+        const gruposPorData = {};
         
-        if(tarefas.length > 0) {
-            // Agrupar por data
-            const grupos = {};
-            tarefas.forEach(t => {
-                const d = new Date(t.data_execucao).toLocaleDateString('pt-BR');
-                if(!grupos[d]) grupos[d] = [];
-                grupos[d].push(t);
+        tarefas.forEach(t => {
+            // Formata a data (ex: 31/01/2026)
+            const dataFormatada = new Date(t.data_execucao).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
+            if(!gruposPorData[dataFormatada]) {
+                gruposPorData[dataFormatada] = [];
+            }
+            gruposPorData[dataFormatada].push(t);
+        });
+
+        // 3. Renderiza cada grupo (Data -> Cards)
+        for(const data in gruposPorData) {
+            html += `
+                <div class="mb-12">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full font-bold text-sm tracking-wider">
+                           <i class="fa-regular fa-calendar-check mr-2"></i> AULA DE ${data}
+                        </span>
+                        <div class="h-[2px] bg-slate-100 flex-grow"></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            `;
+
+            gruposPorData[data].forEach(t => {
+                const img = t.imagem_url || 'https://placehold.co/600x400?text=Atividade+Objetivo';
+                html += `
+                    <div class="card-jogo relative group">
+                        ${estaLogado ? `
+                        <button onclick="deletarTarefa(${t.id})" class="absolute top-3 left-3 z-20 bg-red-500 text-white w-8 h-8 rounded-full shadow-lg hover:bg-red-700 transition scale-0 group-hover:scale-100">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>` : ''}
+                        
+                        <a href="${t.url}" target="_blank" class="block bg-white rounded-[2.5rem] overflow-hidden shadow-lg border border-slate-100 hover:border-blue-200 transition-all">
+                            <div class="h-44 overflow-hidden bg-slate-100">
+                                <img src="${img}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-6 flex justify-between items-center">
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Atividade</span>
+                                    <span class="font-bold text-blue-900 uppercase">${t.titulo}</span>
+                                </div>
+                                <i class="fa-solid fa-circle-play text-blue-600 text-3xl"></i>
+                            </div>
+                        </a>
+                    </div>`;
             });
 
-            for(const data in grupos) {
-                html += `<div class="mb-12">
-                            <div class="flex items-center gap-4 mb-6">
-                                <span class="data-badge">DIA ${data}</span>
-                                <div class="h-[2px] bg-slate-100 flex-grow"></div>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">`;
-                grupos[data].forEach(t => {
-                    const img = t.imagem_url || 'https://placehold.co/600x400?text=Atividade';
-                    html += `
-                        <div class="card-jogo relative">
-                            ${estaLogado ? `<button onclick="deletarTarefa(${t.id})" class="absolute top-4 left-4 z-10 bg-red-500 text-white w-8 h-8 rounded-full shadow-lg"><i class="fa-solid fa-trash text-xs"></i></button>` : ''}
-                            <a href="${t.url}" target="_blank" class="block bg-white rounded-[2.5rem] overflow-hidden shadow-lg border border-slate-100">
-                                <div class="h-40 overflow-hidden"><img src="${img}" class="w-full h-full object-cover"></div>
-                                <div class="p-6 flex justify-between items-center">
-                                    <span class="font-bold text-blue-900 uppercase text-sm">${t.titulo}</span>
-                                    <i class="fa-solid fa-circle-play text-blue-600 text-2xl"></i>
-                                </div>
-                            </a>
-                        </div>`;
-                });
-                html += `</div></div>`;
-            }
-        } else html += `<p class='text-center py-20 italic text-slate-400 bg-white rounded-[3rem]'>Nenhuma atividade para esta turma.</p>`;
-        area.innerHTML = html;
+            html += `</div></div>`; // Fecha o grid e o container do grupo
+        }
+    } else {
+        html += `<p class='text-center py-20 italic text-slate-400 bg-white rounded-[3rem]'>Nenhuma atividade postada para esta turma.</p>`;
     }
+    
+    area.innerHTML = html;
+}
 
     function verificarAcessoAdm() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -173,6 +272,7 @@
             }
         }
     }
+    
 
     async function fazerAuth(action) {
         const email = document.getElementById('login-email').value;
