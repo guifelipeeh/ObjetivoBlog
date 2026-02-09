@@ -121,6 +121,16 @@
             </div>
         </div>
     </footer>
+    <div id="modal-registro" class="hidden fixed inset-0 bg-blue-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl border-t-8 border-green-400 text-center">
+        <h3 class="text-2xl font-black text-blue-900 mb-6 uppercase">Novo Admin</h3>
+        <input type="text" id="reg-nome" placeholder="Seu Nome" class="w-full p-4 mb-3 bg-slate-50 border-2 rounded-2xl outline-none font-bold">
+        <input type="email" id="reg-email" placeholder="Email" class="w-full p-4 mb-3 bg-slate-50 border-2 rounded-2xl outline-none font-bold">
+        <input type="password" id="reg-senha" placeholder="Senha" class="w-full p-4 mb-6 bg-slate-50 border-2 rounded-2xl outline-none font-bold">
+        <button onclick="registrarUsuario()" class="w-full bg-green-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest">Criar Conta</button>
+        <button onclick="abrirModal('modal-login')" class="mt-4 text-blue-600 text-xs font-bold uppercase block w-full">Já tenho conta? Login</button>
+    </div>
+</div>
 
     <script>
     // LISTA DE TURMAS ATUALIZADA
@@ -266,13 +276,47 @@
     }
 }
 
-    async function fazerAuth(action) {
-        const email = document.getElementById('login-email').value;
-        const senha = document.getElementById('login-senha').value;
-        const resp = await fetch('/netlify/functions/auth', { method: 'POST', body: JSON.stringify({ action, email, senha }) });
+   async function fazerAuth(action) {
+    const email = document.getElementById('login-email').value;
+    const senha = document.getElementById('login-senha').value;
+    
+    // CORREÇÃO: Adicionado o ponto (.) antes de /netlify e enviando action
+    const resp = await fetch('/.netlify/functions/auth', { 
+        method: 'POST', 
+        body: JSON.stringify({ action: 'login', email, senha }) 
+    });
+    
+    if (resp.ok) {
         const res = await resp.json();
-        if(resp.ok) { localStorage.setItem('user_logado', res.nome); location.reload(); }
+        localStorage.setItem('user_logado', res.nome);
+        location.reload();
+    } else {
+        alert("Erro no login! Verifique e-mail e senha.");
     }
+}
+
+async function registrarUsuario() {
+    const nome = document.getElementById('reg-nome').value;
+    const email = document.getElementById('reg-email').value;
+    const senha = document.getElementById('reg-senha').value;
+
+    const resp = await fetch('/.netlify/functions/auth', {
+        method: 'POST',
+        body: JSON.stringify({ action: 'register', nome, email, senha })
+    });
+
+    if (resp.ok) {
+        alert("Conta criada com sucesso!");
+        abrirModal('modal-login');
+    } else {
+        const erro = await resp.json();
+        alert("Erro ao registrar: " + erro.details);
+    }
+}
+
+// No modal de login, certifique-se de ter o link para o registro:
+// Adicione este link dentro do modal-login se não tiver:
+// <button onclick="abrirModal('modal-registro')" class="text-blue-600 mt-4 text-xs underline uppercase block w-full">Criar nova conta</button>
 
     function logout() { localStorage.removeItem('user_logado'); location.href = window.location.pathname; }
     window.onload = () => { carregarInterface(); verificarAcessoAdm(); };

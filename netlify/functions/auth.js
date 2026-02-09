@@ -9,41 +9,33 @@ exports.handler = async (event) => {
 
     if (event.httpMethod === "OPTIONS") return { statusCode: 200, headers };
 
-    // Importante: Verifique se a variável no Netlify é DATABASE_URL
-    const sql = neon(process.env.DATABASE_URL);
-
     try {
+        const sql = neon(process.env.DATABASE_URL);
         const body = JSON.parse(event.body);
         const { action, email, senha, nome } = body;
 
-        // AÇÃO DE REGISTRO
+        // REGISTRO
         if (action === 'register') {
             const result = await sql`
                 INSERT INTO usuarios (nome, email, senha) 
                 VALUES (${nome}, ${email}, ${senha}) 
-                RETURNING nome, email`;
-            
-            return {
-                statusCode: 200,
-                headers,
-                body: JSON.stringify({ nome: result[0].nome, message: "Conta criada!" })
-            };
+                RETURNING nome`;
+            return { statusCode: 200, headers, body: JSON.stringify({ nome: result[0].nome }) };
         }
 
-        // AÇÃO DE LOGIN
+        // LOGIN
         if (action === 'login') {
             const users = await sql`SELECT nome FROM usuarios WHERE email = ${email} AND senha = ${senha}`;
             if (users.length > 0) {
                 return { statusCode: 200, headers, body: JSON.stringify({ nome: users[0].nome }) };
             }
-            return { statusCode: 401, headers, body: JSON.stringify({ message: "Credenciais inválidas" }) };
+            return { statusCode: 401, headers, body: JSON.stringify({ message: "Usuário ou senha inválidos" }) };
         }
 
+        return { statusCode: 400, headers, body: JSON.stringify({ message: "Ação não permitida" }) };
+
     } catch (error) {
-        return { 
-            statusCode: 500, 
-            headers, 
-            body: JSON.stringify({ error: "Erro no servidor", details: error.message }) 
-        };
+        console.error("Erro Auth:", error);
+        return { statusCode: 500, headers, body: JSON.stringify({ details: error.message }) };
     }
 };
