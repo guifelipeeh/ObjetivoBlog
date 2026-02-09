@@ -276,47 +276,80 @@
     }
 }
 
-   async function fazerAuth(action) {
+// FUNÇÃO DE LOGIN
+async function fazerAuth(action) {
     const email = document.getElementById('login-email').value;
     const senha = document.getElementById('login-senha').value;
     
-    // CORREÇÃO: Adicionado o ponto (.) antes de /netlify e enviando action
-    const resp = await fetch('/.netlify/functions/auth', { 
-        method: 'POST', 
-        body: JSON.stringify({ action: 'login', email, senha }) 
-    });
-    
-    if (resp.ok) {
+    if (!email || !senha) return alert("Preencha todos os campos!");
+
+    try {
+        // CORREÇÃO DA ROTA: Adicionado /.netlify/
+        const resp = await fetch('/.netlify/functions/auth', { 
+            method: 'POST', 
+            body: JSON.stringify({ action: 'login', email, senha }) 
+        });
+
+        if (!resp.ok) {
+            const erroData = await resp.json();
+            alert("Erro: " + (erroData.message || "Falha no login"));
+            return;
+        }
+
         const res = await resp.json();
         localStorage.setItem('user_logado', res.nome);
         location.reload();
-    } else {
-        alert("Erro no login! Verifique e-mail e senha.");
+        
+    } catch (err) {
+        console.error("Erro na requisição:", err);
+        alert("Erro de conexão com o servidor.");
     }
 }
 
+// FUNÇÃO DE REGISTRO
 async function registrarUsuario() {
     const nome = document.getElementById('reg-nome').value;
     const email = document.getElementById('reg-email').value;
     const senha = document.getElementById('reg-senha').value;
 
-    const resp = await fetch('/.netlify/functions/auth', {
-        method: 'POST',
-        body: JSON.stringify({ action: 'register', nome, email, senha })
-    });
+    if (!nome || !email || !senha) return alert("Preencha tudo!");
 
-    if (resp.ok) {
-        alert("Conta criada com sucesso!");
-        abrirModal('modal-login');
-    } else {
-        const erro = await resp.json();
-        alert("Erro ao registrar: " + erro.details);
+    try {
+        const resp = await fetch('/.netlify/functions/auth', {
+            method: 'POST',
+            body: JSON.stringify({ action: 'register', nome, email, senha })
+        });
+
+        if (resp.ok) {
+            alert("Conta criada com sucesso!");
+            abrirModal('modal-login');
+        } else {
+            const res = await resp.json();
+            alert("Erro: " + res.details);
+        }
+    } catch (err) {
+        alert("Erro ao tentar registrar.");
     }
 }
 
-// No modal de login, certifique-se de ter o link para o registro:
-// Adicione este link dentro do modal-login se não tiver:
-// <button onclick="abrirModal('modal-registro')" class="text-blue-600 mt-4 text-xs underline uppercase block w-full">Criar nova conta</button>
+// ATUALIZAÇÃO DA FUNÇÃO VER TURMA (Também corrigindo a rota)
+async function verTurma(nome, btn) {
+    document.querySelectorAll('.btn-objetivo').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    const area = document.getElementById('area-conteudo');
+    area.innerHTML = "<p class='text-center py-20'>Carregando...</p>";
+
+    try {
+        const resp = await fetch(`/.netlify/functions/neon-db?turma=${encodeURIComponent(nome)}`);
+        const tarefas = await resp.json();
+        
+        // ... (resto da lógica de montagem do HTML dos cards que você já tem)
+        renderizarCards(tarefas, nome); // Chame sua função de renderização aqui
+    } catch (err) {
+        area.innerHTML = "<p class='text-center py-20 text-red-500'>Erro ao carregar dados.</p>";
+    }
+}
 
     function logout() { localStorage.removeItem('user_logado'); location.href = window.location.pathname; }
     window.onload = () => { carregarInterface(); verificarAcessoAdm(); };

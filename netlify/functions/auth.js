@@ -14,7 +14,7 @@ exports.handler = async (event) => {
         const body = JSON.parse(event.body);
         const { action, email, senha, nome } = body;
 
-        // REGISTRO
+        // REGISTRO DE NOVO ADM
         if (action === 'register') {
             const result = await sql`
                 INSERT INTO usuarios (nome, email, senha) 
@@ -29,13 +29,12 @@ exports.handler = async (event) => {
             if (users.length > 0) {
                 return { statusCode: 200, headers, body: JSON.stringify({ nome: users[0].nome }) };
             }
-            return { statusCode: 401, headers, body: JSON.stringify({ message: "Usuário ou senha inválidos" }) };
+            return { statusCode: 401, headers, body: JSON.stringify({ message: "Incorreto" }) };
         }
 
-        return { statusCode: 400, headers, body: JSON.stringify({ message: "Ação não permitida" }) };
+        return { statusCode: 400, headers, body: JSON.stringify({ message: "Ação inválida" }) };
 
     } catch (error) {
-        console.error("Erro Auth:", error);
         return { statusCode: 500, headers, body: JSON.stringify({ details: error.message }) };
     }
 };
