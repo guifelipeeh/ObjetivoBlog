@@ -216,20 +216,41 @@
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">`;
                     
-                    grupos[data].forEach(t => {
-                        const img = t.imagem_url || 'https://placehold.co/600x400?text=Escola+Objetivo';
-                        html += `
-                            <div class="card-jogo relative group">
-                                ${estaLogado ? `<button onclick="deletarTarefa(${t.id})" class="absolute top-3 left-3 z-10 bg-red-500 text-white w-8 h-8 rounded-full shadow-lg hover:bg-red-700 transition"><i class="fa-solid fa-trash text-xs"></i></button>` : ''}
-                                <a href="${t.url}" target="_blank" class="block bg-white rounded-[2.5rem] overflow-hidden shadow-lg border border-slate-100">
-                                    <div class="h-44 overflow-hidden"><img src="${img}" class="w-full h-full object-cover"></div>
-                                    <div class="p-6 flex justify-between items-center">
-                                        <span class="font-bold text-blue-900 uppercase text-xs">${t.titulo}</span>
-                                        <i class="fa-solid fa-circle-play text-blue-600 text-2xl"></i>
-                                    </div>
-                                </a>
-                            </div>`;
-                    });
+                grupos[data].forEach(t => {
+    // Garante uma imagem padrão caso o campo esteja vazio
+    const img = t.imagem_url && t.imagem_url.trim() !== "" 
+                ? t.imagem_url 
+                : 'https://placehold.co/600x400/1e3a8a/FFFFFF?text=Objetivo+Atividade';
+    
+    html += `
+        <div class="card-jogo relative group">
+            ${estaLogado ? `
+                <button onclick="deletarTarefa(${t.id})" 
+                        class="absolute top-3 left-3 z-20 bg-red-500 text-white w-9 h-9 rounded-full shadow-lg hover:bg-red-700 transition-all hover:scale-110 flex items-center justify-center"
+                        title="Excluir Atividade">
+                    <i class="fa-solid fa-trash text-xs"></i>
+                </button>` : ''}
+            
+            <a href="${t.url}" target="_blank" rel="noopener noreferrer" 
+               class="block bg-white rounded-[2.5rem] overflow-hidden shadow-lg border border-slate-100 hover:border-blue-300 transition-colors">
+                
+                <div class="h-44 overflow-hidden bg-slate-100">
+                    <img src="${img}" 
+                         alt="${t.titulo}" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                         onerror="this.src='https://placehold.co/600x400/1e3a8a/FFFFFF?text=Erro+na+Imagem'">
+                </div>
+                
+                <div class="p-6 flex justify-between items-center bg-white">
+                    <div class="flex flex-col">
+                        <span class="font-black text-blue-900 uppercase text-[10px] tracking-wider mb-1">Atividade Digital</span>
+                        <span class="font-bold text-slate-600 uppercase text-xs truncate max-w-[150px]">${t.titulo}</span>
+                    </div>
+                    <i class="fa-solid fa-circle-play text-blue-600 text-3xl group-hover:text-yellow-400 transition-colors"></i>
+                </div>
+            </a>
+        </div>`;
+});
                     html += `</div></div>`;
                 }
             } else {
